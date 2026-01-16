@@ -86,3 +86,28 @@ platform (includes db locker, sqlite3 executable, optional rrs, rrs.pem and SQLT
 compile lock program to lock sqlite3 database against concurrent write
 access (this is typically a problem if the database is stored on an NFS
 filesystem) 
+
+## Rutile slab generation
+Tested successfully with the following environment:
+```
+conda create -n sqltm python=3.12 -y
+pip install numpy scipy matplotlib ase
+pip install mysql-connector-python
+```
+
+### Workflow
+1. Move to the slab example directory:
+   `cd examples/slabs`
+2. Edit `rutile.py`, which defines bulk and surface structural parameters.
+ - Set the metal element:
+   `metal = 'Ru' # default: 'Ru'`
+ - Specify the rutile unit cell parameters:
+     - `a`, `c`: lattice parameters
+     - `x`: oxygen internal coordinate defining the O sublattice in the P4₂/mnm space group
+3. Move to the metal-oxide-specific directory:
+   `cd RuO2`
+4. Check `rutile_slab.py` and ensure:
+   `metal = 'Ru'`
+   is consistent with the setting in `rutile.py`.
+5. Generate the slab structures:
+   `python rutile_slab.py`
