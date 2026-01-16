@@ -1,0 +1,119 @@
+import sys
+import os
+import scipy as sp
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+import thermo as td
+import janaf
+
+
+# ZPEs diatomics:  Irikura2007 https://doi.org/10.1063/1.2436891 
+# Water: Benedict1956
+# system components
+
+
+
+def get_basis(components_list):
+    s = []
+    for c in components_list:
+        s.append(c['symbol'])
+    basis = [item for sublist in s for item in sublist]
+#    return dict((x,l.count(x)) for x in set(basis))
+    return list(set(basis))
+
+def update_components(components_list):
+    basis = get_basis(components_list)
+    for c in components_list:
+        n = sp.zeros(len(basis))
+        for i,e in enumerate(basis):
+            n[i] = c['symbol'].count(e) 
+        c['n'] = n
+    return components_list,basis
+
+def get_activity(components_list, act_dict):
+    activity = sp.zeros(len(components_list))
+    for i,c in enumerate(components_list):
+        if c['name'] in act_dict:
+            activity[i] = act_dict[c['name']]
+        else:
+            activity[i] = 1
+    return activity
+
+
+H2 = {
+    'name': 'H2',
+    'symbol':['H','H'],
+    'E': -31.748060581, # PBE, tier-2, light
+#	'E': -31.74871067, #PBE, tier-2, tight
+    'ZPE': 2179.31*td.icm_to_eV, # experiment (approx. 0.27 eV)
+    'mu': janaf.mu('H2')
+}
+
+Hp = {
+    'name': 'Hp',
+    'symbol':['H'],
+    'E': 0.5*H2['E'],
+    'ZPE': 0.5*H2['ZPE'],
+    'mu': janaf.mu('H2', c=0.5)
+}
+
+O2 = {
+    'name': 'O2',
+    'symbol':['O','O'],
+    'E': -4093.432366663, # PBE, tier-2, light
+#	'E': -4093.43219500, # PBE, tier-2, tight
+    'ZPE': 787.3806*td.icm_to_eV, # experiment (approx. 0.10 eV)
+    'mu': janaf.mu('O2')
+}
+
+H2O = {
+    'name': 'H2O',
+    'symbol':['H','H','O'],
+    'E': -2080.962382237, # PBE, tier-2, light
+#	'E': -2080.96532805, # PBE, tier-2, tight
+    'ZPE': 4504.0*td.icm_to_eV, # experiment (approx. 0.56 eV)
+    'mu': janaf.mu('H2Og_1bar') # H2O(g) for error compensation due to solvation energy
+}
+
+IrO2 = {
+    'name': 'IrO2',
+    'symbol':['Ir','O','O'],
+    'E': -505418.18, # PBE, Ir:tier-1, O:tier-2
+    'ZPE': 0.0, # assume this cancels
+    'mu': lambda mu: 0.0
+}
+
+RuO2 = {
+    'name': 'RuO2',
+    'symbol':['Ru','O','O'],
+    'E': -257376.841653178*0.5, # PBE, Ru:tier-1, O:tier-2, light
+#	'E': -257377.0513898*0.5, # PBE, Ru:tier-1, O:tier-2, tight
+    'ZPE': 0.0, # assume this cancels
+    'mu': lambda mu: 0.0
+}
+
+MnO2 = {
+    'name': 'MnO2',
+    'symbol':['Mn','O','O'],
+    'E': -71477.91611340*0.5, # PBE, Mn:tier-1, O:tier-2
+    'ZPE': 0.0, # assume this cancels
+    'mu': lambda mu: 0.0
+}
+
+
+TiO2 = {
+    'name': 'TiO2',
+    'symbol':['Ti','O','O'],
+    'E':  -54801.26034070*0.5, # PBE, Ti:tier-1, O:tier-2
+    'ZPE': 0.0, # assume this cancels
+    'mu': lambda mu: 0.0
+}
+
+SnO2 = {
+    'name': 'SnO2',
+    'symbol':['Sn','O','O'],
+    'E': -348927.95235727*0.5, # PBE, Sn:tier-1, O:tier-2, light
+#	'E': -348929.12134145*0.5, # PBE, Sn:tier-1, O:tier-2, tight
+    'ZPE': 0.0, # assume this cancels
+    'mu': lambda mu: 0.0
+}

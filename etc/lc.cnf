@@ -1,0 +1,8 @@
+[client]
+user=
+host=mpp2-login5
+password=sqltmdb
+port=3746
+
+[mysql]
+database=

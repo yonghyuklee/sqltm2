@@ -1,0 +1,8 @@
+[client]
+user=
+host=login03-ib
+password=sqltmdb
+port=3746
+
+[mysql]
+database=
